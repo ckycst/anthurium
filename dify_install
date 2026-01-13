@@ -1,26 +1,20 @@
-## Dify installation with Docker
-cd /opt
-git clone https://github.com/langgenius/dify.git
-
-cd dify/docker
-cp .env.example .env
-
-## 修改.env文件中的配置
-# APP_WEB_URL
-http://localhost 或者 http://你的 IP 地址
-
-#数据库相关配置：
-它会使用docker内置的数据库
-
-#模型供应商的API Keys
-配置自己的模型 API Keys
-
-## startup dify
+###########################################
+###    Dify installation with Docker    ###
+###########################################
+### 1. install docker with orbstack     ###
+### 2. config the docker img srouces    ###
+### 3. install dify with docker         ###
+### 4. config the dify options          ###
+###########################################
+### 1. 安装 OrbStack (for docker)：
+# mac环境下使用 docker, 使用orbstack, 下载地址：https://orbstack.dev/download
 # 最好安装科学上网工具
-# 配置腾讯云的加速器地址：
+
+### 2. 配置腾讯云的加速器地址：
 sudo vim /etc/docker/daemon.json
 #加入以下地址："ccr.ccs.tencentyun.com",
 #最后daemon.json 如下：
+
 {
     "registry-mirrors": [
 	"https://docker.1panel.live",
@@ -34,5 +28,42 @@ sudo vim /etc/docker/daemon.json
 ]
 }
 
-### 注意点：
-mac环境下使用 docker, 使用orbstack
+### 3. 安装 dify
+cd /opt
+git clone https://github.com/langgenius/dify.git
+
+cd dify/docker
+cp .env.example .env
+
+### 4. 修改.env文件中的配置
+# APP_WEB_URL
+http://localhost 或者 http://你的 IP 地址
+
+#数据库相关配置：
+它会使用docker内置的数据库
+
+#模型供应商的API Keys
+配置自己的模型 API Keys
+
+## startup dify
+cd /opt/dify/docker
+sudo docker compose up -d
+
+### 5. 启动过程的文件夹权限报错：
+Error response from daemon: error while creating mount source path '/opt/dify/docker/volumes/sandbox/dependencies': mkdir /opt/dify/docker/volumes/sandbox/dependencies: permission denied
+# 手动创建目录并授权（推荐）
+# 1. 创建整个目录结构
+sudo mkdir -p /opt/dify/docker/volumes/sandbox/dependencies
+
+# 2. 将目录所有权赋予当前用户（或 docker 用户组）
+# 假设你的用户名是 carlos（根据你之前的提示符）
+sudo chown -R $(whoami):staff /opt/dify
+
+# 或者更宽松一点（仅用于开发环境）：
+sudo chmod -R 777 /opt/dify
+
+# 再次启动
+sudo docker compose up -d
+
+
+
